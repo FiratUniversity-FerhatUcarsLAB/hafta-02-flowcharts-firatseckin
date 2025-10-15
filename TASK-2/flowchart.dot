@@ -1,0 +1,116 @@
+digraph E_TICARET_FLOW {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    
+    // 1. OTURUM YÖNETİMİ
+    start_oturum [label="BAŞLA OTURUM_YONETIMI", shape=Mdiamond];
+    karar1 [label="KULLANICI_OTURUMU MEVCUT MU?", shape=diamond];
+    islem1_yeni [label="YENI_SEPET_OLUSTUR = DOGRU", shape=box];
+    islem1_mevcut [label="YENI_SEPET_OLUSTUR = YANLIS", shape=box];
+    karar1_1 [label="YENI_SEPET_OLUSTUR?", shape=diamond];
+    islem1_sepet_yeni [label="SEPET = YENI_SEPET_OLUSTUR()", shape=box];
+    islem1_sepet_mevcut [label="SEPET = KULLANICI_KAYITLI_SEPETI_GETIR()", shape=box];
+    end_oturum [label="BİTİR OTURUM_YONETIMI", shape=Mdiamond];
+
+    // 2. ÜRÜN EKLEME
+    start_ekle [label="BAŞLA URUN_EKLEME", shape=Mdiamond];
+    islem2_stok_kontrol [label="STOK_DURUMU = VERITABANI_STOK_KONTROL()", shape=box];
+    karar2 [label="KONTROL 1:\nSTOK_DURUMU >= ADET?", shape=diamond];
+    islem2_ekle [label="SEPET = SEPET_URUN_EKLE(ADET)", shape=box];
+    islem2_hata [label="Hata: Stok Yetersiz\nSepete Maksimum Adet Ekle", shape=box];
+    islem2_tutar [label="TOPLAM_TUTAR = HESAPLA()", shape=box];
+    end_ekle [label="BİTİR URUN_EKLEME", shape=Mdiamond];
+
+    // 3. SEPET GÜNCELLEME
+    start_guncelle [label="BAŞLA SEPET_GUNCELLEME", shape=Mdiamond];
+    karar3 [label="INDİRİM_KODU MEVCUT MU?", shape=diamond];
+    islem3_kod_kontrol [label="KOD_DURUMU = INDIRIM_KODU_DOGRULA()", shape=box];
+    karar3_1 [label="KONTROL 2:\nKOD_DURUMU GECERLI MI?", shape=diamond];
+    islem3_indirim_uygula [label="INDİRİM_TUTARI HESAPLA", shape=box];
+    islem3_indirim_hata [label="İndirim Kodu Geçersiz Uyarısı", shape=box];
+    islem3_son_tutar [label="SEPET.ARA_TOPLAM = TOPLAM - INDIRIM", shape=box];
+    end_guncelle [label="BİTİR SEPET_GUNCELLEME", shape=Mdiamond];
+
+    // 4. KARGO HESAPLAMA
+    start_kargo [label="BAŞLA KARGO_HESAPLAMA", shape=Mdiamond];
+    karar4 [label="KONTROL 3:\nADRES_GECERLI_MI?", shape=diamond];
+    islem4_kargo_hesapla [label="KARGO_UCRETI = EN_UYGUN_KARGO_BUL()", shape=box];
+    karar4_1 [label="KONTROL 4:\nARA_TOPLAM >= UCRETSIZ_KARGO_LIMITI?", shape=diamond];
+    islem4_ucretsiz [label="KARGO_UCRETI = 0", shape=box];
+    islem4_nihai_tutar [label="SEPET.ODENECEK_TUTAR = HESAPLA()", shape=box];
+    end_kargo [label="BİTİR KARGO_HESAPLAMA", shape=Mdiamond];
+    
+    // 5. ÖDEME İŞLEMİ
+    start_odeme [label="BAŞLA ODEME_ISLEMI", shape=Mdiamond];
+    islem5_dongu [label="DONGU: Her Ürün İçin...", shape=box, style=filled, fillcolor=lightblue];
+    karar5 [label="KONTROL 5:\nSTOK TEKRAR YETERLİ Mİ?", shape=diamond];
+    islem5_hata [label="Hata: Stok Değişimi\nSipariş İptal", shape=box, style=filled, fillcolor=orange];
+    
+    islem5_odeme_istek [label="KONTROL 6:\nSANAL_POS_ODEME_ISTEGI GÖNDER", shape=box];
+    karar5_1 [label="KONTROL 7:\nISLEM_SONUCU = 'BASARILI'?", shape=diamond];
+    islem5_basarili [label="SIPARIS 'ONAYLANDI'\nSTOK DÜŞÜLÜR, KULLANICI BİLGİLENDİRİLİR", shape=box, style=filled, fillcolor=lightgreen];
+    islem5_bekliyor [label="SIPARIS 'ODEME_BEKLIYOR'", shape=box];
+    islem5_basarisiz [label="Hata: Ödeme İşlemi Başarısız", shape=box, style=filled, fillcolor=red];
+    end_odeme [label="BİTİR ODEME_ISLEMI", shape=Mdiamond];
+
+    // Akış Bağlantıları
+    
+    // 1. OTURUM
+    start_oturum -> karar1;
+    karar1 -> islem1_mevcut [label="EVET"];
+    karar1 -> islem1_yeni [label="HAYIR"];
+    islem1_mevcut -> karar1_1;
+    islem1_yeni -> karar1_1;
+    karar1_1 -> islem1_sepet_yeni [label="EVET"];
+    karar1_1 -> islem1_sepet_mevcut [label="HAYIR"];
+    islem1_sepet_yeni -> end_oturum;
+    islem1_sepet_mevcut -> end_oturum;
+    
+    // 2. ÜRÜN EKLEME
+    start_ekle -> islem2_stok_kontrol;
+    islem2_stok_kontrol -> karar2;
+    karar2 -> islem2_ekle [label="EVET"];
+    karar2 -> islem2_hata [label="HAYIR"];
+    islem2_ekle -> islem2_tutar;
+    islem2_hata -> islem2_tutar;
+    islem2_tutar -> end_ekle;
+
+    // 3. SEPET GÜNCELLEME
+    start_guncelle -> karar3;
+    karar3 -> islem3_kod_kontrol [label="EVET"];
+    karar3 -> islem3_son_tutar [label="HAYIR"];
+    islem3_kod_kontrol -> karar3_1;
+    karar3_1 -> islem3_indirim_uygula [label="EVET"];
+    karar3_1 -> islem3_indirim_hata [label="HAYIR"];
+    islem3_indirim_uygula -> islem3_son_tutar;
+    islem3_indirim_hata -> islem3_son_tutar;
+    islem3_son_tutar -> end_guncelle;
+    
+    // 4. KARGO HESAPLAMA
+    start_kargo -> karar4;
+    karar4 -> islem4_kargo_hesapla [label="EVET"];
+    karar4 -> islem4_nihai_tutar [label="HAYIR"]; // Hata mesajından sonra nihai tutar hesaplanabilir (kargo=0 varsayımıyla)
+    islem4_kargo_hesapla -> karar4_1;
+    karar4_1 -> islem4_ucretsiz [label="EVET"];
+    karar4_1 -> islem4_nihai_tutar [label="HAYIR"];
+    islem4_ucretsiz -> islem4_nihai_tutar;
+    islem4_nihai_tutar -> end_kargo;
+
+    // 5. ÖDEME İŞLEMİ
+    start_odeme -> islem5_dongu;
+    islem5_dongu -> karar5;
+    karar5 -> islem5_odeme_istek [label="EVET"];
+    karar5 -> islem5_hata [label="HAYIR"];
+
+    islem5_odeme_istek -> karar5_1;
+    karar5_1 -> islem5_basarili [label="EVET"];
+    karar5_1 -> islem5_bekliyor [label="HAYIR/HAVALE"];
+    islem5_bekliyor -> islem5_basarisiz [label="HAYIR/BAŞARISIZ"]; // Örnek ayrım
+    
+    islem5_hata -> end_odeme;
+    islem5_basarili -> end_odeme;
+    islem5_basarisiz -> end_odeme;
+
+}
