@@ -1,0 +1,32 @@
+digraph ATM_Process {
+    rankdir=LR;
+    
+    // Noktalar (işlemler)
+    start [label="BASLA" shape=ellipse]
+    pin_check [label="PIN Doğrulama" shape=box]
+    bakiye_check [label="Bakiye Kontrolü" shape=box]
+    tutar_check [label="Tutar Kontrolü\n(20 TL Katları)" shape=box]
+    limit_check [label="Günlük Limit Kontrolü" shape=box]
+    para_cekme [label="Para Çekme İşlemi" shape=box]
+    islem_tekraresi [label="İşlem Tekrarı" shape=diamond]
+    exit [label="BİTİR" shape=ellipse]
+
+    // İlişkiler (işlem geçişleri)
+    start -> pin_check
+    pin_check -> bakiye_check [label="PIN Doğru"]
+    pin_check -> start [label="Yanlış PIN (Kalan Hak)"]
+    pin_check -> exit [label="3 Hata Yapıldı (Kart Bloke)"]
+    
+    bakiye_check -> tutar_check
+    tutar_check -> limit_check [label="Tutar Geçerli"]
+    tutar_check -> exit [label="Tutar Geçersiz (20 TL Katları)"]
+
+    limit_check -> para_cekme [label="Limit Geçerli"]
+    limit_check -> exit [label="Limit Aşıldı"]
+    
+    para_cekme -> islem_tekraresi [label="Para Çekildi"]
+    para_cekme -> exit [label="Yetersiz Bakiye"]
+    
+    islem_tekraresi -> start [label="Evet"]
+    islem_tekraresi -> exit [label="Hayır"]
+}
