@@ -1,0 +1,382 @@
+“E-ticaret sitesinde sepet yönetimi ve ödeme sistemini adım adım açıkla.
+
+Kullanıcı girişi, ürün ekleme, stok kontrolü, indirim kodu, kargo hesaplama
+
+ve ödeme aşamalarını içermeli.”
+
+
+
+Elbette, bir e-ticaret sitesindeki sepet yönetimi ve ödeme sisteminin adım adım işleyişini istenen tüm bileşenleri (kullanıcı girişi, ürün ekleme, stok kontrolü, indirim kodu, kargo hesaplama ve ödeme aşamaları) içerecek şekilde detaylıca açıklıyorum.
+
+🛒 E-Ticaret Sepet Yönetimi ve Ödeme Sistemi Adım Adım
+Adım 1: Kullanıcı Girişi/Üyelik ve Oturum Başlatma
+Sistem, kullanıcının siteye erişimiyle başlar.
+
+Ziyaretçi (Misafir) Olarak Başlama: Kullanıcı siteye misafir olarak başlar ve bu durumdayken de sepet oluşturabilir. Sepet bilgileri genellikle çerezler veya geçici oturum kimlikleri ile tutulur.
+
+Kullanıcı Girişi/Üyelik: Kullanıcının daha önceki sepetlerini, adreslerini ve ödeme bilgilerini kaydetmesi için giriş yapması veya yeni bir hesap oluşturması istenir. Giriş yapıldığında, daha önce tamamlanmamış sepeti mevcutsa, mevcut sepetle birleştirilebilir.
+
+Adım 2: Ürün Ekleme ve Sepet Oluşturma
+Kullanıcı, beğendiği ürünleri sepete ekler.
+
+Ürün Seçimi: Kullanıcı, ürün detay sayfasında varyant (beden, renk vb.) ve adet seçimi yapar.
+
+Sepete Ekleme: "Sepete Ekle" butonuna tıklandığında ürün, belirtilen özellik ve adette kullanıcının sanal sepetine eklenir.
+
+Adım 3: Anlık Stok Kontrolü (Kritik Aşama)
+Bu aşama, sepete ekleme veya ödeme öncesi tekrarlanır.
+
+Stok Kontrolü: Sepete eklenen her ürün için anlık stok durumu kontrol edilir.
+
+Kullanıcı Bilgilendirmesi: Eğer eklenmek istenen adette stok yoksa, kullanıcıya bir uyarı mesajı (örneğin, "Bu üründen stokta sadece 3 adet kaldı.") gösterilir ve sepetine ekleyebileceği maksimum adetle sınırlandırılır.
+
+Adım 4: Sepet Özeti ve İndirim Uygulama
+Kullanıcı sepetine gider ve siparişi gözden geçirir.
+
+Sepet Görüntüleme: Sepetteki ürünler, adetleri, birim fiyatları ve toplam fiyat listelenir.
+
+Adet Değiştirme ve Çıkarma: Kullanıcı, sepetteyken ürün adetlerini artırıp azaltabilir veya ürünü tamamen çıkarabilir. Her değişiklikte stok kontrolü tekrar yapılır ve toplam tutar güncellenir.
+
+İndirim Kodu/Kupon Uygulama:
+
+Kullanıcı, ilgili alana indirim kodunu girer.
+
+Sistem, kodun geçerliliğini (süresi, minimum sepet tutarı, belirli ürünlere/kullanıcılara özel olup olmadığı) kontrol eder.
+
+Kod geçerliyse, indirim tutarı hesaplanır, sepetten düşülür ve yeni toplam tutar gösterilir.
+
+Adım 5: Adres ve Kargo Hesaplama
+Siparişin teslim edileceği yer belirlenir ve kargo ücreti hesaplanır.
+
+Adres Seçimi/Girişi: Kullanıcı, kayıtlı adreslerinden birini seçer veya yeni bir teslimat adresi ve fatura adresi girer.
+
+Kargo Yöntemi ve Ücret Hesaplama:
+
+Sistem, teslimat adresine göre mevcut kargo seçeneklerini (hızlı kargo, standart kargo vb.) listeler.
+
+Kargo Ücreti Hesaplaması: Sepet tutarı, ağırlığı ve teslimat bölgesine göre kargo ücreti hesaplanır.
+
+Ücretsiz Kargo Kontrolü: Eğer sepet tutarı "ücretsiz kargo" limitini aşıyorsa, kargo ücreti sıfırlanır ve kullanıcıya bilgilendirme yapılır.
+
+Nihai Toplam Tutar: Ürün toplamı + Kargo ücreti - İndirim tutarı = Ödenecek Toplam Tutar belirlenir.
+
+💳 Adım 6: Ödeme Aşaması (Checkout)
+Kullanıcının siparişi onaylayıp ödemeyi tamamladığı son aşamadır.
+
+Ödeme Yöntemi Seçimi: Kullanıcı, tercih ettiği ödeme yöntemini seçer:
+
+Sanal POS (Kredi/Banka Kartı): En yaygın yöntem.
+
+Havale/EFT
+
+Kapıda Ödeme
+
+Dijital Cüzdanlar (Apple Pay, Google Pay vb.)
+
+Ödeme Bilgilerinin Girilmesi:
+
+Sanal POS İçin: Kullanıcı, kart numarasını, son kullanma tarihini ve CVV kodunu girer.
+
+Sistem, kart bilgilerini güvenli bir şekilde (PCI DSS standartlarına uygun olarak) Sanal POS hizmet sağlayıcısına iletir.
+
+3D Secure Onayı: Çoğu banka ve Sanal POS sağlayıcısı, güvenliği artırmak için 3D Secure (SMS ile doğrulama) kullanır. Kullanıcı, bankadan gelen şifreyi girerek işleme onay verir.
+
+Bankadan Onay Alma: Banka, kartın geçerliliğini ve limitini kontrol eder, ardından ödeme işlemini onaylar veya reddeder.
+
+Adım 7: Siparişin Tamamlanması ve Bilgilendirme
+Başarılı Ödeme: Ödeme başarılı olduğunda, sipariş sistemde "Onaylandı" veya "Ödeme Alındı" statüsüne geçer.
+
+Stok Güncelleme: Satılan ürünlerin adetleri stoktan düşülür.
+
+Kullanıcı Bilgilendirmesi: Kullanıcı, sipariş numarası ve detaylarının bulunduğu bir sipariş onay sayfasına yönlendirilir. Aynı zamanda e-posta veya SMS ile de bilgilendirilir.
+
+Satıcı Bilgilendirmesi: Satıcıya (e-ticaret sitesi yöneticisine) yeni bir siparişin alındığına dair bildirim gönderilir.
+
+Bu adımların tamamı, kesintisiz ve güvenli bir alışveriş deneyimi sağlamak üzere tasarlanmıştır.
+
+E-ticaret siteniz için ödeme altyapısı seçimi (Sanal POS, ödeme kuruluşları vb.) veya kargo entegrasyonları hakkında daha fazla bilgi ister misiniz?
+
+
+
+
+Bu sistemi pseudocode olarak yaz. Döngüler için DONGU, koşullar için
+
+EGER-
+
+ISE kullan. Her adımı BAŞLA ile başlat, BITIR ile bitir. Tüm
+
+kontrol noktalarını belirt.
+
+
+
+Harika bir istek! Açıklanan e-ticaret sepet yönetimi ve ödeme sistemini, istenen format ve anahtar kelimelerle adım adım pseudocode (sözde kod) olarak aşağıda sunuyorum.
+
+💻 E-Ticaret Sepet Yönetimi ve Ödeme Sistemi (Pseudocode)
+1. Kullanıcı Girişi ve Oturum (OTURUM_YONETIMI)
+Kod snippet'i
+
+BAŞLA OTURUM_YONETIMI
+    KULLANICI_OTURUMU = OTURUM_VERISI_KONTROL_ET()
+
+    EGER KULLANICI_OTURUMU MEVCUT ISE
+        // Oturum varsa devam et
+        KULLANICI = KULLANICI_OTURUMU
+        YENI_SEPET_OLUSTUR = YANLIS
+    DEGILSE
+        // Misafir veya yeni oturum başlat
+        KULLANICI = "MISAFIR"
+        YENI_SEPET_OLUSTUR = DOGRU
+    BITIR EGER
+
+    EGER YENI_SEPET_OLUSTUR ISE
+        SEPET = YENI_SEPET_OLUSTUR()
+    DEGILSE
+        SEPET = KULLANICI_KAYITLI_SEPETI_GETIR(KULLANICI)
+    BITIR EGER
+BITIR OTURUM_YONETIMI
+2. Ürün Ekleme ve Stok Kontrolü (URUN_EKLEME)
+Kod snippet'i
+
+BAŞLA URUN_EKLEME(URUN_ID, VARIYANT, ADET)
+    
+    STOK_DURUMU = VERITABANI_STOK_KONTROL(URUN_ID, VARIYANT)
+    
+    // *** KONTROL NOKTASI 1: Yeterli Stok Kontrolü ***
+    EGER STOK_DURUMU >= ADET ISE
+        SEPET = SEPET_URUN_EKLE(SEPET, URUN_ID, VARIYANT, ADET)
+        MESAJ_GOSTER("Ürün sepete eklendi.")
+    ISE
+        MEVCUT_ADET = STOK_DURUMU
+        MESAJ_GOSTER("Hata: Yeterli stok yok. Sepete eklenebilecek maksimum adet: " + MEVCUT_ADET)
+        
+        EGER MEVCUT_ADET > 0 ISE
+            SEPET = SEPET_URUN_EKLE(SEPET, URUN_ID, VARIYANT, MEVCUT_ADET)
+        BITIR EGER
+    BITIR EGER
+
+    TOPLAM_TUTAR = SEPET_TUTAR_HESAPLA(SEPET)
+    
+BITIR URUN_EKLEME
+3. Sepet Özeti ve İndirim Uygulama (SEPET_GUNCELLEME)
+Kod snippet'i
+
+BAŞLA SEPET_GUNCELLEME(INDİRİM_KODU, SEPET)
+    INDİRİM_TUTARI = 0
+
+    // *** KONTROL NOKTASI 2: İndirim Kodu Kontrolü ***
+    EGER INDİRİM_KODU MEVCUT ISE
+        KOD_DURUMU = INDIRIM_KODU_DOGRULA(INDİRİM_KODU, SEPET.TOPLAM_TUTAR, KULLANICI)
+        
+        EGER KOD_DURUMU GECERLI ISE
+            INDİRİM_TUTARI = INDIRIM_ORANI_HESAPLA(INDİRİM_KODU, SEPET.TOPLAM_TUTAR)
+            MESAJ_GOSTER("İndirim başarıyla uygulandı.")
+        ISE
+            MESAJ_GOSTER("Hata: İndirim kodu geçersiz veya koşulları sağlamıyor.")
+        BITIR EGER
+    BITIR EGER
+
+    SEPET.INDIRIM = INDİRİM_TUTARI
+    SEPET.ARA_TOPLAM = SEPET.TOPLAM_TUTAR - SEPET.INDIRIM
+
+BITIR SEPET_GUNCELLEME
+4. Adres ve Kargo Hesaplama (KARGO_HESAPLAMA)
+Kod snippet'i
+
+BAŞLA KARGO_HESAPLAMA(TESLIMAT_ADRESI, SEPET)
+    KARGO_UCRETI = 0
+    KARGO_UYGULANDI = YANLIS
+    
+    // *** KONTROL NOKTASI 3: Adres/Bölge Kontrolü ***
+    EGER ADRES_GECERLI_MI(TESLIMAT_ADRESI) ISE
+        KARGO_YONTEMLERI = ADRESE_UYGUN_KARGO_GETIR(TESLIMAT_ADRESI)
+
+        // DONGU: Seçenekleri listele ve en ucuzu seç
+        KARGO_UCRETI = EN_UYGUN_KARGO_UCRETI_BUL(SEPET.AGIRLIK, TESLIMAT_ADRESI)
+        KARGO_UYGULANDI = DOGRU
+    ISE
+        MESAJ_GOSTER("Lütfen geçerli bir teslimat adresi girin.")
+    BITIR EGER
+
+    // *** KONTROL NOKTASI 4: Ücretsiz Kargo Kontrolü ***
+    EGER KARGO_UYGULANDI ISE
+        EGER SEPET.ARA_TOPLAM >= UCRETSIZ_KARGO_LIMITI ISE
+            KARGO_UCRETI = 0
+            MESAJ_GOSTER("Tebrikler! Ücretsiz kargo hakkı kazandınız.")
+        BITIR EGER
+    BITIR EGER
+
+    SEPET.KARGO_UCRETI = KARGO_UCRETI
+    SEPET.ODENECEK_TUTAR = SEPET.ARA_TOPLAM + SEPET.KARGO_UCRETI
+
+BITIR KARGO_HESAPLAMA
+5. Ödeme ve Sipariş Onay Aşaması (ODEME_ISLEMI)
+Kod snippet'i
+
+BAŞLA ODEME_ISLEMI(SEPET, ODEME_BILGILERI)
+    
+    // *** KONTROL NOKTASI 5: Son Stok Kontrolü ***
+    DONGU SEPET'teki Her Ürün İçin
+        EGER VERITABANI_STOK_KONTROL(URUN) < URUN.ADET ISE
+            MESAJ_GOSTER("Hata: " + URUN.ADI + " ürününde stok azaldı. Lütfen sepeti güncelleyin.")
+            SIPARIS_DURUMU = "IPTAL"
+            GERI_DON(0) // Ödeme İşlemini durdur
+        BITIR EGER
+    BITIR DONGU
+    
+    // *** KONTROL NOKTASI 6: Ödeme Sağlayıcı İşlemi ***
+    EGER ODEME_BILGILERI.YONTEM == "KREDI_KARTI" ISE
+        ISLEM_SONUCU = SANAL_POS_ODEME_ISTEGI(SEPET.ODENECEK_TUTAR, ODEME_BILGILERI.KART)
+    DEGILSE EGER ODEME_BILGILERI.YONTEM == "HAVALE" ISE
+        ISLEM_SONUCU = "BEKLEYEN_ODEME"
+    DEGILSE
+        ISLEM_SONUCU = "HATA"
+    BITIR EGER
+
+    // *** KONTROL NOKTASI 7: Ödeme Başarı Kontrolü ***
+    EGER ISLEM_SONUCU == "BASARILI" ISE
+        SIPARIS_DURUMU = "ONAYLANDI"
+        SIPARIS_ID = VERITABANI_SIPARIS_KAYDET(SEPET, KULLANICI)
+        STOK_MIKTARLARINI_GUNCELLE(SEPET)
+        KULLANICI_MAIL_GONDER(SIPARIS_ID, "Siparişiniz Onaylandı")
+        MESAJ_GOSTER("Siparişiniz başarıyla tamamlandı. Sipariş ID: " + SIPARIS_ID)
+    DEGILSE EGER ISLEM_SONUCU == "BEKLEYEN_ODEME" ISE
+        SIPARIS_DURUMU = "ODEME_BEKLIYOR"
+        // ... Diğer işlemler (Kaydetme, Bilgilendirme)
+    ISE
+        SIPARIS_DURUMU = "BASARISIZ"
+        MESAJ_GOSTER("Hata: Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.")
+    BITIR EGER
+    
+BITIR ODEME_ISLEMI
+
+
+
+
+Pseudocode’u Graphviz DOT formatına çevir. rankdir=TB kullan. Karar
+
+noktalarında EVET/HAYIR etiketlerini unutma.
+
+
+Harika bir fikir! Pseudocode'un adımlarını ve kontrol noktalarını görselleştirmek, sistemin akışını anlamak için çok faydalıdır. İstenen Graphviz DOT formatına çevrilmiş, dikey akışlı (rankdir=TB) ve karar noktalarında EVET/HAYIR etiketli kodu aşağıda bulabilirsiniz.
+
+📉 E-Ticaret Sistemi Akış Şeması (Graphviz DOT)
+Bu kod bloğunu bir Graphviz görselleştirme aracına (örneğin, online DOT editörleri) yapıştırarak görseli oluşturabilirsiniz.
+
+Kod snippet'i
+
+digraph E_TICARET_FLOW {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    
+    // 1. OTURUM YÖNETİMİ
+    start_oturum [label="BAŞLA OTURUM_YONETIMI", shape=Mdiamond];
+    karar1 [label="KULLANICI_OTURUMU MEVCUT MU?", shape=diamond];
+    islem1_yeni [label="YENI_SEPET_OLUSTUR = DOGRU", shape=box];
+    islem1_mevcut [label="YENI_SEPET_OLUSTUR = YANLIS", shape=box];
+    karar1_1 [label="YENI_SEPET_OLUSTUR?", shape=diamond];
+    islem1_sepet_yeni [label="SEPET = YENI_SEPET_OLUSTUR()", shape=box];
+    islem1_sepet_mevcut [label="SEPET = KULLANICI_KAYITLI_SEPETI_GETIR()", shape=box];
+    end_oturum [label="BİTİR OTURUM_YONETIMI", shape=Mdiamond];
+
+    // 2. ÜRÜN EKLEME
+    start_ekle [label="BAŞLA URUN_EKLEME", shape=Mdiamond];
+    islem2_stok_kontrol [label="STOK_DURUMU = VERITABANI_STOK_KONTROL()", shape=box];
+    karar2 [label="KONTROL 1:\nSTOK_DURUMU >= ADET?", shape=diamond];
+    islem2_ekle [label="SEPET = SEPET_URUN_EKLE(ADET)", shape=box];
+    islem2_hata [label="Hata: Stok Yetersiz\nSepete Maksimum Adet Ekle", shape=box];
+    islem2_tutar [label="TOPLAM_TUTAR = HESAPLA()", shape=box];
+    end_ekle [label="BİTİR URUN_EKLEME", shape=Mdiamond];
+
+    // 3. SEPET GÜNCELLEME
+    start_guncelle [label="BAŞLA SEPET_GUNCELLEME", shape=Mdiamond];
+    karar3 [label="INDİRİM_KODU MEVCUT MU?", shape=diamond];
+    islem3_kod_kontrol [label="KOD_DURUMU = INDIRIM_KODU_DOGRULA()", shape=box];
+    karar3_1 [label="KONTROL 2:\nKOD_DURUMU GECERLI MI?", shape=diamond];
+    islem3_indirim_uygula [label="INDİRİM_TUTARI HESAPLA", shape=box];
+    islem3_indirim_hata [label="İndirim Kodu Geçersiz Uyarısı", shape=box];
+    islem3_son_tutar [label="SEPET.ARA_TOPLAM = TOPLAM - INDIRIM", shape=box];
+    end_guncelle [label="BİTİR SEPET_GUNCELLEME", shape=Mdiamond];
+
+    // 4. KARGO HESAPLAMA
+    start_kargo [label="BAŞLA KARGO_HESAPLAMA", shape=Mdiamond];
+    karar4 [label="KONTROL 3:\nADRES_GECERLI_MI?", shape=diamond];
+    islem4_kargo_hesapla [label="KARGO_UCRETI = EN_UYGUN_KARGO_BUL()", shape=box];
+    karar4_1 [label="KONTROL 4:\nARA_TOPLAM >= UCRETSIZ_KARGO_LIMITI?", shape=diamond];
+    islem4_ucretsiz [label="KARGO_UCRETI = 0", shape=box];
+    islem4_nihai_tutar [label="SEPET.ODENECEK_TUTAR = HESAPLA()", shape=box];
+    end_kargo [label="BİTİR KARGO_HESAPLAMA", shape=Mdiamond];
+    
+    // 5. ÖDEME İŞLEMİ
+    start_odeme [label="BAŞLA ODEME_ISLEMI", shape=Mdiamond];
+    islem5_dongu [label="DONGU: Her Ürün İçin...", shape=box, style=filled, fillcolor=lightblue];
+    karar5 [label="KONTROL 5:\nSTOK TEKRAR YETERLİ Mİ?", shape=diamond];
+    islem5_hata [label="Hata: Stok Değişimi\nSipariş İptal", shape=box, style=filled, fillcolor=orange];
+    
+    islem5_odeme_istek [label="KONTROL 6:\nSANAL_POS_ODEME_ISTEGI GÖNDER", shape=box];
+    karar5_1 [label="KONTROL 7:\nISLEM_SONUCU = 'BASARILI'?", shape=diamond];
+    islem5_basarili [label="SIPARIS 'ONAYLANDI'\nSTOK DÜŞÜLÜR, KULLANICI BİLGİLENDİRİLİR", shape=box, style=filled, fillcolor=lightgreen];
+    islem5_bekliyor [label="SIPARIS 'ODEME_BEKLIYOR'", shape=box];
+    islem5_basarisiz [label="Hata: Ödeme İşlemi Başarısız", shape=box, style=filled, fillcolor=red];
+    end_odeme [label="BİTİR ODEME_ISLEMI", shape=Mdiamond];
+
+    // Akış Bağlantıları
+    
+    // 1. OTURUM
+    start_oturum -> karar1;
+    karar1 -> islem1_mevcut [label="EVET"];
+    karar1 -> islem1_yeni [label="HAYIR"];
+    islem1_mevcut -> karar1_1;
+    islem1_yeni -> karar1_1;
+    karar1_1 -> islem1_sepet_yeni [label="EVET"];
+    karar1_1 -> islem1_sepet_mevcut [label="HAYIR"];
+    islem1_sepet_yeni -> end_oturum;
+    islem1_sepet_mevcut -> end_oturum;
+    
+    // 2. ÜRÜN EKLEME
+    start_ekle -> islem2_stok_kontrol;
+    islem2_stok_kontrol -> karar2;
+    karar2 -> islem2_ekle [label="EVET"];
+    karar2 -> islem2_hata [label="HAYIR"];
+    islem2_ekle -> islem2_tutar;
+    islem2_hata -> islem2_tutar;
+    islem2_tutar -> end_ekle;
+
+    // 3. SEPET GÜNCELLEME
+    start_guncelle -> karar3;
+    karar3 -> islem3_kod_kontrol [label="EVET"];
+    karar3 -> islem3_son_tutar [label="HAYIR"];
+    islem3_kod_kontrol -> karar3_1;
+    karar3_1 -> islem3_indirim_uygula [label="EVET"];
+    karar3_1 -> islem3_indirim_hata [label="HAYIR"];
+    islem3_indirim_uygula -> islem3_son_tutar;
+    islem3_indirim_hata -> islem3_son_tutar;
+    islem3_son_tutar -> end_guncelle;
+    
+    // 4. KARGO HESAPLAMA
+    start_kargo -> karar4;
+    karar4 -> islem4_kargo_hesapla [label="EVET"];
+    karar4 -> islem4_nihai_tutar [label="HAYIR"]; // Hata mesajından sonra nihai tutar hesaplanabilir (kargo=0 varsayımıyla)
+    islem4_kargo_hesapla -> karar4_1;
+    karar4_1 -> islem4_ucretsiz [label="EVET"];
+    karar4_1 -> islem4_nihai_tutar [label="HAYIR"];
+    islem4_ucretsiz -> islem4_nihai_tutar;
+    islem4_nihai_tutar -> end_kargo;
+
+    // 5. ÖDEME İŞLEMİ
+    start_odeme -> islem5_dongu;
+    islem5_dongu -> karar5;
+    karar5 -> islem5_odeme_istek [label="EVET"];
+    karar5 -> islem5_hata [label="HAYIR"];
+
+    islem5_odeme_istek -> karar5_1;
+    karar5_1 -> islem5_basarili [label="EVET"];
+    karar5_1 -> islem5_bekliyor [label="HAYIR/HAVALE"];
+    islem5_bekliyor -> islem5_basarisiz [label="HAYIR/BAŞARISIZ"]; // Örnek ayrım
+    
+    islem5_hata -> end_odeme;
+    islem5_basarili -> end_odeme;
+    islem5_basarisiz -> end_odeme;
+
+}
