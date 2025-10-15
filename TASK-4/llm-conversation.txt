@@ -1,0 +1,127 @@
+digraph DERS_KAYIT_SISTEMI_FLOW {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    start [label="BAŞLA DERS_KAYIT_SISTEMI", shape=Mdiamond];
+    
+    // 1. Giriş
+    islem1_giris [label="Öğrenci No ve Şifre Al", shape=box];
+    islem1_dogrula [label="VERITABANI_KIMLIK_DOGRULA()", shape=box];
+    karar1 [label="Giriş Başarılı Mı?", shape=diamond];
+    islem1_hata [label="Hata: Giriş Başarısız. Sonlandır.", shape=box, style=filled, fillcolor=red];
+    islem1_hazirlik [label="GPA, Kayıtlı Dersler, Kredi Limiti (35) Hazırla", shape=box];
+    
+    // 2. Ders Seçim Döngüsü
+    dongu_basla [label="DÖNGÜ: Ders Seçimine Devam Ediyor Mu?", shape=diamond, style=filled, fillcolor=lightblue];
+    islem2_listele [label="Ders Listesini Göster (Ekle/Çıkar/Onayla Seçimi)", shape=box];
+    karar2_islem [label="İşlem Tipi 'EKLE' Mi?", shape=diamond];
+    
+    // 3. Ders Ekleme ve Kontroller
+    islem3_secim [label="Ders Bilgisini Çek (DERS)", shape=box];
+    
+    // A. Kontrol: Kontenjan
+    karar3a [label="KONTROL A:\nKontenjan Dolu Mu?", shape=diamond];
+    
+    // B. Kontrol: Ön Koşul
+    karar3b [label="KONTROL B:\nÖn Koşul Sağlanıyor Mu?", shape=diamond];
+    
+    // C. Kontrol: Kredi Limiti
+    karar3c [label="KONTROL C:\n(TOPLAM_KREDI + DERS.KREDI) ≤ 35?", shape=diamond];
+    
+    // D. Kontrol: Zaman Çakışması
+    karar3d [label="KONTROL D:\nZaman Çakışması Var Mı?", shape=diamond];
+    
+    islem3_eklendi [label="Sepete Ekle, TOPLAM_KREDI Güncelle", shape=box, style=filled, fillcolor=lightgreen];
+    islem3_hata_kont [label="Hata: Kontenjan Dolu.", shape=box, style=filled, fillcolor=orange];
+    islem3_hata_onkosul [label="Hata: Ön Koşul Sağlanmıyor.", shape=box, style=filled, fillcolor=orange];
+    islem3_hata_kredi [label="Hata: Kredi Limiti Aşıldı.", shape=box, style=filled, fillcolor=orange];
+    islem3_hata_zaman [label="Hata: Zaman Çakışması Var.", shape=box, style=filled, fillcolor=orange];
+    
+    // 4. Ders Çıkarma
+    karar4 [label="Ders Sepette Mevcut Mu?", shape=diamond];
+    islem4_cikar [label="Sepetten Çıkar, TOPLAM_KREDI Güncelle", shape=box, style=filled, fillcolor=yellow];
+    islem4_hata_cikar [label="Hata: Sepette Ders Yok.", shape=box];
+    
+    // 5. Onay ve Kesinleştirme
+    islem5_ozet [label="Kayıt Özetini Göster", shape=box];
+    
+    // E. Kontrol: Danışman Onayı
+    karar5a [label="KONTROL E:\nÖğrenci GPA < 2.5 Mı?", shape=diamond];
+    
+    dongu_onay [label="DÖNGÜ: Danışman Onayı Alındı Mı?", shape=diamond, style=filled, fillcolor=lightblue];
+    karar5b [label="Onay Durumu 'REDDEDILDI' Mi?", shape=diamond];
+    
+    islem5_red [label="Hata: Danışman Reddi. Sonlandır.", shape=box, style=filled, fillcolor=red];
+    islem5_kesinlestir [label="VERITABANI_DERS_KAYIT_KESINLESTIR()", shape=box, style=filled, fillcolor=lightgreen];
+    end [label="BİTİR DERS_KAYIT_SISTEMI", shape=Mdiamond];
+
+
+    // Akış Bağlantıları
+    
+    // 1. Giriş
+    start -> islem1_giris;
+    islem1_giris -> islem1_dogrula;
+    islem1_dogrula -> karar1;
+    karar1 -> islem1_hazirlik [label="EVET"];
+    karar1 -> islem1_hata [label="HAYIR"];
+    islem1_hata -> end;
+    
+    // 2. Döngü Başlangıcı
+    islem1_hazirlik -> dongu_basla;
+    dongu_basla -> islem2_listele [label="EVET"];
+    dongu_basla -> islem5_ozet [label="HAYIR/ONAYLA"]; // Çıkış koşulu
+    islem2_listele -> karar2_islem;
+
+    // 3. Ders Ekleme Akışı (İç İçe Kontroller)
+    karar2_islem -> islem3_secim [label="EVET"];
+    islem3_secim -> karar3a;
+    
+    // Kontrol A
+    karar3a -> karar3b [label="HAYIR"]; // Kontenjan OK
+    karar3a -> islem3_hata_kont [label="EVET"]; // Kontenjan Dolu
+
+    // Kontrol B
+    karar3b -> karar3c [label="EVET"]; // Ön Koşul OK
+    karar3b -> islem3_hata_onkosul [label="HAYIR"]; // Ön Koşul Eksik
+
+    // Kontrol C
+    karar3c -> karar3d [label="EVET"]; // Kredi Limiti OK
+    karar3c -> islem3_hata_kredi [label="HAYIR"]; // Kredi Limiti Aşıldı
+
+    // Kontrol D
+    karar3d -> islem3_eklendi [label="HAYIR"]; // Çakışma Yok
+    karar3d -> islem3_hata_zaman [label="EVET"]; // Çakışma Var
+
+    // Hatalar ve Başarı Durumu (Ekleme)
+    islem3_eklendi -> dongu_basla;
+    islem3_hata_kont -> dongu_basla;
+    islem3_hata_onkosul -> dongu_basla;
+    islem3_hata_kredi -> dongu_basla;
+    islem3_hata_zaman -> dongu_basla;
+
+
+    // 4. Ders Çıkarma Akışı
+    karar2_islem -> karar4 [label="HAYIR/ÇIKAR"]; // İşlem Çıkar ise
+    karar4 -> islem4_cikar [label="EVET"];
+    karar4 -> islem4_hata_cikar [label="HAYIR"];
+    islem4_cikar -> dongu_basla;
+    islem4_hata_cikar -> dongu_basla;
+    
+    // 5. Onay ve Kesinleştirme
+    islem5_ozet -> karar5a;
+    
+    // Kontrol E (Danışman Onayı)
+    karar5a -> dongu_onay [label="EVET"]; // GPA < 2.5 ise onaya git
+    karar5a -> islem5_kesinlestir [label="HAYIR"]; // GPA OK ise doğrudan kesinleştir
+    
+    // Danışman Onayı Döngüsü
+    dongu_onay -> karar5b [label="Onay Alındı"];
+    dongu_onay -> dongu_onay [label="Bekle"]; // Bekleme durumunu temsil eder
+    
+    karar5b -> islem5_kesinlestir [label="HAYIR/ONAY"]; // Reddedilmedi (Onaylandı)
+    karar5b -> islem5_red [label="EVET/RED"]; // Reddedildi
+
+    islem5_red -> end;
+    islem5_kesinlestir -> end;
+}
