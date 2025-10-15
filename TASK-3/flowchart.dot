@@ -1,0 +1,65 @@
+digraph RANDEVU_SISTEMI_FLOW {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    start [label="BAŞLA RANDEVU_SISTEMI", shape=Mdiamond];
+    
+    // 1. Kimlik Doğrulama
+    islem1_input [label="TCKN ve Şifre Al", shape=box];
+    islem1_dogrula [label="VERITABANI_KIMLIK_DOGRULA()", shape=box];
+    karar1 [label="Kimlik Doğrulama Başarılı Mı?", shape=diamond];
+    islem1_hata [label="Hata: Doğrulama Başarısız.\nSistemi Sonlandır.", shape=box, style=filled, fillcolor=red];
+    
+    // 2. Poliklinik Seçimi
+    islem2_poliklinik [label="Poliklinik Listesi Getir ve Seçtir", shape=box];
+    
+    // 3. Doktor Listesi Görüntüleme
+    islem3_doktor [label="Seçilen Polikliniğe Ait\nDoktor Listesi Getir ve Seçtir", shape=box];
+    
+    // 4. Uygun Saatleri Gösterme
+    islem4_tarih_al [label="Randevu Tarihini Al", shape=box];
+    islem4_saat_hesapla [label="Dolu Saatleri Çıkararak\nUYGUN_SAATLER'i Belirle", shape=box];
+    karar4 [label="UYGUN_SAATLER\nBOŞ MU?", shape=diamond];
+    islem4_saat_sec [label="Kullanıcıdan Saat Seçimi Al", shape=box];
+    islem4_saat_yok [label="Hata: Uygun Saat Yok.\nSistemi Sonlandır.", shape=box, style=filled, fillcolor=red];
+
+    // 5. Randevu Onaylama ve Kayıt
+    islem5_kaydet [label="VERITABANI_RANDEVU_KAYDET()", shape=box, style=filled, fillcolor=lightgreen];
+    
+    // 6. SMS Gönderme
+    islem6_sms_hazirla [label="Hasta Telefonu ve SMS Metnini Hazırla", shape=box];
+    islem6_sms_gonder [label="SMS_GONDER(HASTA_TELEFON, SMS_METNİ)", shape=box];
+    
+    // 7. Sistem Bitişi
+    islem7_son [label="Randevu Başarıyla Oluşturuldu Mesajı", shape=box];
+    end [label="BİTİR RANDEVU_SISTEMI", shape=Mdiamond];
+
+    // Akış Bağlantıları
+    start -> islem1_input;
+    islem1_input -> islem1_dogrula;
+    islem1_dogrula -> karar1;
+    
+    // 1. Karar (Kimlik Doğrulama)
+    karar1 -> islem2_poliklinik [label="EVET"];
+    karar1 -> islem1_hata [label="HAYIR"];
+    islem1_hata -> end;
+    
+    // 2-3. Poliklinik ve Doktor
+    islem2_poliklinik -> islem3_doktor;
+    
+    // 4. Karar (Saat Kontrolü)
+    islem3_doktor -> islem4_tarih_al;
+    islem4_tarih_al -> islem4_saat_hesapla;
+    islem4_saat_hesapla -> karar4;
+    karar4 -> islem4_saat_sec [label="HAYIR"]; // Saat boş değilse seçime geç
+    karar4 -> islem4_saat_yok [label="EVET"]; // Saat boş ise sonlandır
+    islem4_saat_yok -> end;
+    
+    // 5-6-7. Kayıt ve Sonlandırma
+    islem4_saat_sec -> islem5_kaydet;
+    islem5_kaydet -> islem6_sms_hazirla;
+    islem6_sms_hazirla -> islem6_sms_gonder;
+    islem6_sms_gonder -> islem7_son;
+    islem7_son -> end;
+}
