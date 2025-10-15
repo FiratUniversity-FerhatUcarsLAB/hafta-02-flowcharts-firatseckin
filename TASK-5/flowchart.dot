@@ -1,0 +1,118 @@
+digraph AKILLI_EV_GÜVENLIK_SISTEMI {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    start [label="BAŞLA GÜVENLİK SİSTEMİ", shape=Mdiamond];
+    islem0 [label="Durumları Başlat:\nALARM_CALIYOR_MU=YANLIS, vb.", shape=box];
+    
+    // 1. Ana Döngü (Sürekli Çalışma)
+    dongu_ana [label="DÖNGÜ: SÜREKLİ ÇALIŞ", shape=diamond, style=filled, fillcolor=lightblue];
+    
+    // Kontrol 1: Sistem Aktif Mi?
+    karar1 [label="KONTROL 1:\nSISTEM_DURUMU == 'AKTIF'?", shape=diamond];
+    islem_bekle_pasif [label="BEKLE(5) (Pasif Durum)", shape=box];
+
+    // 2. Sensör Okuma Döngüsü
+    dongu_sensor [label="DÖNGÜ: TÜM SENSÖRLER İÇİN", shape=box, style=filled, fillcolor=lightyellow];
+    islem_tehdit_reset [label="Tehlike Durumunu Sıfırla", shape=box];
+    
+    // Sensör Kontrolleri
+    karar2_hareket [label="KONTROL 2:\nHareket Algılandı Mı?", shape=diamond];
+    karar3_giris [label="KONTROL 3:\nKapı/Pencere AÇIK Mı?", shape=diamond];
+    islem_seviye_dusuk [label="TEHLIKE_ALGILANDI=DOGRU\nALARM_SEVİYESİ = 1", shape=box];
+    islem_seviye_orta [label="TEHLIKE_ALGILANDI=DOGRU\nALARM_SEVİYESİ = 2", shape=box];
+    
+    // 3. Tehdit ve Yanlış Alarm Kontrolü
+    karar_tehlike [label="TEHLIKE_ALGILANDI?", shape=diamond];
+    karar4_yanlis [label="KONTROL 4:\nEv Sahibi EVDE Mi?", shape=diamond];
+    karar4_seviye [label="ALARM_SEVİYESİ <= 1 Mi?", shape=diamond];
+    islem_yanlis_alarm [label="Alarm İptal Edildi (Düşük Seviye)", shape=box, style=filled, fillcolor=orange];
+    
+    // 4. Alarm Aksiyonları
+    karar_orta_yuksek [label="ALARM_SEVİYESİ >= 2 Mi?", shape=diamond];
+    islem_siren [label="ALARM_SİRENİ_ÇALIŞMAYI_BAŞLAT()", shape=box];
+    
+    karar5_kamera [label="KONTROL 5:\nALARM_SEVİYESİ >= 1 Mi?", shape=diamond];
+    islem_kamera [label="KAMERA_KAYDINI_BAŞLAT()", shape=box];
+    islem_bildirim [label="Bildirimleri Gönder (SMS/Email/App)", shape=box, style=filled, fillcolor=lightcoral];
+    
+    // 5. Bekleme ve Sıfırlama Döngüsü
+    dongu_sifirlama [label="DÖNGÜ: ALARM_CALIYOR_MU == DOGRU", shape=diamond, style=filled, fillcolor=lightblue];
+    islem_bekle_onay [label="BEKLE(10) / Komut Al", shape=box];
+    
+    // Kontrol 6: Sıfırlama
+    karar6_komut [label="KONTROL 6:\nKomut 'SIFIRLA' Mı?", shape=diamond];
+    karar6_polis [label="Komut 'POLIS_CAGIR' Mı?", shape=diamond];
+    
+    islem_sifirla [label="Alarm Sıfırlandı\n(ALARM_CALIYOR_MU=YANLIS)", shape=box, style=filled, fillcolor=lightgreen];
+    islem_polis [label="POLİS_BİRİMİ_BİLGİLENDİR()", shape=box, style=filled, fillcolor=red];
+    
+    // Akış Bağlantıları
+    start -> islem0;
+    islem0 -> dongu_ana; // Sonsuz döngü başlangıcı
+    
+    // Ana Döngü Kontrolü
+    dongu_ana -> karar1 [label="Sürekli"];
+    karar1 -> islem_tehdit_reset [label="EVET"];
+    karar1 -> islem_bekle_pasif [label="HAYIR"];
+
+    // Pasif Durum
+    islem_bekle_pasif -> dongu_ana;
+
+    // Sensör Okuma (Kısaltılmış Döngü Gösterimi)
+    islem_tehdit_reset -> dongu_sensor;
+    dongu_sensor -> karar2_hareket [label="Her Sensör İçin"];
+    
+    // Hareket Kontrolü
+    karar2_hareket -> islem_seviye_dusuk [label="EVET"];
+    karar2_hareket -> karar3_giris [label="HAYIR"];
+
+    // Giriş Kontrolü
+    karar3_giris -> islem_seviye_orta [label="EVET"];
+    karar3_giris -> karar_tehlike [label="HAYIR/Döngü Sonu"]; // Sensör döngüsünden çıkış
+
+    islem_seviye_dusuk -> karar_tehlike;
+    islem_seviye_orta -> karar_tehlike;
+
+    // Tehdit Algılama
+    karar_tehlike -> karar4_yanlis [label="EVET"];
+    karar_tehlike -> dongu_ana [label="HAYIR"]; // Tehlike yoksa başa dön
+    
+    // Yanlış Alarm Kontrolü
+    karar4_yanlis -> karar4_seviye [label="EVET/Evde"];
+    karar4_yanlis -> karar_orta_yuksek [label="HAYIR/Dışarıda"];
+
+    karar4_seviye -> islem_yanlis_alarm [label="EVET/Düşük Seviye"];
+    karar4_seviye -> karar_orta_yuksek [label="HAYIR/Orta/Yüksek"];
+    
+    islem_yanlis_alarm -> dongu_ana;
+    
+    // Alarm Aksiyonları
+    karar_orta_yuksek -> islem_siren [label="EVET"];
+    karar_orta_yuksek -> karar5_kamera [label="HAYIR"];
+    islem_siren -> karar5_kamera;
+    
+    karar5_kamera -> islem_kamera [label="EVET"];
+    karar5_kamera -> islem_bildirim [label="HAYIR"]; // Seviye < 1 ise kamera yok
+
+    islem_kamera -> islem_bildirim;
+    islem_bildirim -> dongu_sifirlama;
+
+    // Sıfırlama Döngüsü
+    dongu_sifirlama -> islem_bekle_onay [label="Sürekli"];
+    islem_bekle_onay -> karar6_komut;
+    
+    // Komut Kontrolü
+    karar6_komut -> islem_sifirla [label="EVET/SIFIRLA"];
+    karar6_komut -> karar6_polis [label="HAYIR"];
+    
+    karar6_polis -> islem_polis [label="EVET/POLIS_CAGIR"];
+    karar6_polis -> dongu_sifirlama [label="HAYIR/Bekle"];
+    
+    islem_sifirla -> dongu_ana;
+    islem_polis -> dongu_ana;
+    
+    dongu_ana -> end [label="Sistem Kapatıldı (Dışarıdan)"]; // Teorik sonlandırma
+
+}
