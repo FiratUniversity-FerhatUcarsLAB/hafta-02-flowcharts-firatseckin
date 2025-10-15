@@ -1,0 +1,177 @@
+Hastane randevu sistemi için algoritma: kimlik doğrulama, poliklinik
+
+seçimi, doktor listesi görüntüleme, uygun saatleri gösterme, randevu
+
+onaylama ve SMS gönderme. Pseudocode yaz.
+
+
+
+Elbette, bir hastane randevu sistemi için gerekli adımları içeren pseudocode algoritmasını, istenen tüm aşamaları (kimlik doğrulama, poliklinik seçimi, doktor listesi, saat gösterme, onay ve SMS) içerecek şekilde yazıyorum.
+
+🏥 Hastane Randevu Sistemi Algoritması (Pseudocode)
+Bu akış, kullanıcının sisteme giriş yapmasından randevu onayına kadar olan süreci adım adım takip eder.
+
+Kod snippet'i
+
+BAŞLA RANDEVU_SISTEMI
+
+    // =======================================================
+    // 1. KULLANICI GİRİŞİ / KİMLİK DOĞRULAMA
+    // =======================================================
+    KIMLIK_NO = KULLANICIDAN_AL("TC Kimlik Numarası")
+    SIFRE = KULLANICIDAN_AL("Şifre")
+
+    KIMLIK_DURUMU = VERITABANI_KIMLIK_DOGRULA(KIMLIK_NO, SIFRE)
+
+    EGER KIMLIK_DURUMU GECERLI DEGIL ISE
+        MESAJ_GOSTER("Kimlik doğrulama başarısız. Lütfen bilgileri kontrol edin.")
+        GERI_DON(0) // Sistemi sonlandır
+    BITIR EGER
+
+    // =======================================================
+    // 2. POLİKLİNİK SEÇİMİ
+    // =======================================================
+    POLIKLINIK_LISTESI = VERITABANI_POLIKLINIK_GETIR()
+    KULLANICI_POLIKLINIK_SECIMI = KULLANICIDAN_LISTEDEN_SEC(POLIKLINIK_LISTESI)
+
+    // =======================================================
+    // 3. DOKTOR LİSTESİ GÖRÜNTÜLEME
+    // =======================================================
+    DOKTOR_LISTESI = VERITABANI_DOKTOR_GETIR(KULLANICI_POLIKLINIK_SECIMI)
+    KULLANICI_DOKTOR_SECIMI = KULLANICIDAN_LISTEDEN_SEC(DOKTOR_LISTESI)
+
+    // =======================================================
+    // 4. UYGUN SAATLERİ GÖSTERME (TARİH VE ZAMAN KONTROLÜ)
+    // =======================================================
+    SECILEN_TARIH = KULLANICIDAN_TARIH_AL("Randevu Tarihi")
+    
+    // Doktorun çalışma saatlerini ve mevcut randevularını getir
+    DOLU_SAATLER = VERITABANI_DOLU_RANDEVU_GETIR(KULLANICI_DOKTOR_SECIMI, SECILEN_TARIH)
+    TUM_SAATLER = DOKTOR_CALISMA_SAATLERI_GETIR(KULLANICI_DOKTOR_SECIMI)
+
+    UYGUN_SAATLER = FARK_KUMESI_AL(TUM_SAATLER, DOLU_SAATLER)
+    
+    EGER UYGUN_SAATLER BOS ISE
+        MESAJ_GOSTER("Bu tarihte uygun saat bulunmamaktadır. Lütfen başka bir tarih seçin.")
+        GERI_DON(0) // Sistemi sonlandır veya başa döndür
+    BITIR EGER
+
+    KULLANICI_SAAT_SECIMI = KULLANICIDAN_LISTEDEN_SEC(UYGUN_SAATLER)
+
+    // =======================================================
+    // 5. RANDEVU ONAYLAMA VE KAYIT
+    // =======================================================
+    RAND_KIMLIK = YENI_RANDEVU_ID_OLUSTUR()
+    ONAY_KODU = RASTGELE_KOD_URET(6)
+    
+    RANDEVU_KAYDI_BILGILERI = {
+        "RandevuID": RAND_KIMLIK,
+        "TC_Kimlik": KIMLIK_NO,
+        "DoktorID": KULLANICI_DOKTOR_SECIMI,
+        "TarihSaat": SECILEN_TARIH + KULLANICI_SAAT_SECIMI,
+        "Durum": "ONAY BEKLİYOR"
+    }
+
+    // Randevuyu veritabanına kaydet
+    VERITABANI_RANDEVU_KAYDET(RANDEVU_KAYDI_BILGILERI)
+    
+    // =======================================================
+    // 6. SMS GÖNDERME
+    // =======================================================
+    HASTA_TELEFON = VERITABANI_TELEFON_GETIR(KIMLIK_NO)
+    
+    SMS_METNI = "Randevunuz oluşturulmuştur.\n" + \
+                "Tarih: " + SECILEN_TARIH + " Saat: " + KULLANICI_SAAT_SECIMI + "\n" + \
+                "Doktor: " + DOKTOR_ADI_GETIR(KULLANICI_DOKTOR_SECIMI) + "\n" + \
+                "Onay Kodu: " + ONAY_KODU
+                
+    SMS_GONDER(HASTA_TELEFON, SMS_METNI)
+    
+    // =======================================================
+    // 7. SİSTEM BİTİŞİ
+    // =======================================================
+    MESAJ_GOSTER("Randevunuz başarıyla oluşturuldu ve SMS gönderildi.")
+
+BITIR RANDEVU_SISTEMI
+Bu algoritma, temel bir randevu sisteminin mantıksal akışını gösterir. Bu yapıyı kullanarak randevunun iptali veya değiştirilmesi gibi ek adımları da ekleyebiliriz.
+
+
+
+
+
+şimdi bunu graphvize uygun dot kodu yazar mısın
+
+
+Elbette, hastane randevu sistemi pseudocode'unu Graphviz DOT formatına çeviriyorum. Akışın anlaşılırlığını artırmak için dikey sıralamayı (rankdir=TB) ve karar noktalarında EVET/HAYIR etiketlerini kullanacağım.
+
+📉 Hastane Randevu Sistemi Akış Şeması (Graphviz DOT)
+Bu kodu bir Graphviz görselleştirme aracında kullanarak akış şemasını oluşturabilirsiniz.
+
+Kod snippet'i
+
+digraph RANDEVU_SISTEMI_FLOW {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    start [label="BAŞLA RANDEVU_SISTEMI", shape=Mdiamond];
+    
+    // 1. Kimlik Doğrulama
+    islem1_input [label="TCKN ve Şifre Al", shape=box];
+    islem1_dogrula [label="VERITABANI_KIMLIK_DOGRULA()", shape=box];
+    karar1 [label="Kimlik Doğrulama Başarılı Mı?", shape=diamond];
+    islem1_hata [label="Hata: Doğrulama Başarısız.\nSistemi Sonlandır.", shape=box, style=filled, fillcolor=red];
+    
+    // 2. Poliklinik Seçimi
+    islem2_poliklinik [label="Poliklinik Listesi Getir ve Seçtir", shape=box];
+    
+    // 3. Doktor Listesi Görüntüleme
+    islem3_doktor [label="Seçilen Polikliniğe Ait\nDoktor Listesi Getir ve Seçtir", shape=box];
+    
+    // 4. Uygun Saatleri Gösterme
+    islem4_tarih_al [label="Randevu Tarihini Al", shape=box];
+    islem4_saat_hesapla [label="Dolu Saatleri Çıkararak\nUYGUN_SAATLER'i Belirle", shape=box];
+    karar4 [label="UYGUN_SAATLER\nBOŞ MU?", shape=diamond];
+    islem4_saat_sec [label="Kullanıcıdan Saat Seçimi Al", shape=box];
+    islem4_saat_yok [label="Hata: Uygun Saat Yok.\nSistemi Sonlandır.", shape=box, style=filled, fillcolor=red];
+
+    // 5. Randevu Onaylama ve Kayıt
+    islem5_kaydet [label="VERITABANI_RANDEVU_KAYDET()", shape=box, style=filled, fillcolor=lightgreen];
+    
+    // 6. SMS Gönderme
+    islem6_sms_hazirla [label="Hasta Telefonu ve SMS Metnini Hazırla", shape=box];
+    islem6_sms_gonder [label="SMS_GONDER(HASTA_TELEFON, SMS_METNİ)", shape=box];
+    
+    // 7. Sistem Bitişi
+    islem7_son [label="Randevu Başarıyla Oluşturuldu Mesajı", shape=box];
+    end [label="BİTİR RANDEVU_SISTEMI", shape=Mdiamond];
+
+    // Akış Bağlantıları
+    start -> islem1_input;
+    islem1_input -> islem1_dogrula;
+    islem1_dogrula -> karar1;
+    
+    // 1. Karar (Kimlik Doğrulama)
+    karar1 -> islem2_poliklinik [label="EVET"];
+    karar1 -> islem1_hata [label="HAYIR"];
+    islem1_hata -> end;
+    
+    // 2-3. Poliklinik ve Doktor
+    islem2_poliklinik -> islem3_doktor;
+    
+    // 4. Karar (Saat Kontrolü)
+    islem3_doktor -> islem4_tarih_al;
+    islem4_tarih_al -> islem4_saat_hesapla;
+    islem4_saat_hesapla -> karar4;
+    karar4 -> islem4_saat_sec [label="HAYIR"]; // Saat boş değilse seçime geç
+    karar4 -> islem4_saat_yok [label="EVET"]; // Saat boş ise sonlandır
+    islem4_saat_yok -> end;
+    
+    // 5-6-7. Kayıt ve Sonlandırma
+    islem4_saat_sec -> islem5_kaydet;
+    islem5_kaydet -> islem6_sms_hazirla;
+    islem6_sms_hazirla -> islem6_sms_gonder;
+    islem6_sms_gonder -> islem7_son;
+    islem7_son -> end;
+}
+Bu DOT kodu, hastane randevu sisteminizin mantıksal akışını görsel olarak temsil edecektir. Bu şemayı kullanarak sistemin hangi aşamasında bir aksaklık (hata) çıkabileceğini daha net görebilirsiniz.
