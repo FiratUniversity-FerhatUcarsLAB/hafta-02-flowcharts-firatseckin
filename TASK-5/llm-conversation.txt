@@ -1,0 +1,302 @@
+G¨orev 5: Akıllı Ev G¨uvenlik Sistemi
+
+Sistem A¸cıklaması
+
+IoT tabanlı akıllı ev g¨uvenlik sisteminin alarm ve bildirim s¨ure¸clerini
+
+modelleyin.
+
+Sistem Gereksinimleri:
+
+Sistem aktif mi kontrol¨u (ko¸sul)
+
+Sens¨or okuma d¨ong¨us¨u (d¨ong¨u - s¨urekli)
+
+Hareket sens¨or¨u kontrol¨u (ko¸sul)
+
+Kapı/pencere sens¨or¨u kontrol¨u (ko¸sul)
+
+Kamera aktivasyonu (ko¸sul)
+
+Yanlı¸s alarm kontrol¨u (ev sahibi evde mi?) (ko¸sul)
+
+Alarm seviyesi belirleme (1-d¨u¸s¨uk, 2-orta, 3-y¨uksek) (ko¸sul)
+
+Bildirim g¨onderme (SMS + App + Email)
+
+Bekle ve tekrar kontrol et (d¨ong¨u)
+
+Alarm sıfırlama veya devam ettirme (ko¸sul)
+
+Zorluk: Orta-Zor
+
+S¨urekli calısan sistem - sonsuz d¨ong¨u icinde kosullar! F.U - O.M.K (TF Yazılım M¨uh.) ¨ Hafta 2 - Akı¸s Diyagramları Lab 5 Ekim 2025 18 / 32
+
+G¨orev 5: LLM ile Ger¸cek Zamanlı Sistem
+
+S¨urekli C¸ alı¸san Sistemler ˙I¸cin:
+
+Sonsuz D¨ong¨u Yakla¸sımı
+
+“Akıllı ev g¨uvenlik sistemi 7/24 ¸calı¸sır. Ana d¨ong¨u i¸cinde sens¨or okuma,
+
+tehdit algılama, alarm verme ve bildirim g¨onderme s¨ure¸clerini i¸ceren
+
+pseudocode yaz.”
+
+Ozel Notlar: ¨
+
+Ana DONG ¨ U s¨urekli ¸calı¸sır (DO ¨ GRU ko¸sulu ile) ˘
+
+Her d¨ong¨u iterasyonunda t¨um sens¨orler kontrol edilir
+
+Tehdit seviyesine g¨ore farklı aksiyonlar alınır
+
+Alarm sıfırlama komutu gelene kadar devam eder
+
+DOT’ta Sonsuz D¨ong¨u
+
+DOT dilinde sonsuz d¨ong¨uy¨u g¨ostermek i¸cin geri ok kullanın ve ”S¨urekli”
+
+etiketi ekleyin. 
+
+
+
+Harika bir görev! Sürekli çalışan, IoT tabanlı bir güvenlik sisteminin karmaşık algoritmasını, istenen tüm kontrol ve döngü yapılarını kullanarak pseudocode formatında hazırlıyorum.
+
+Bu sistemde ana döngü, kullanıcı alarmı sıfırlayana kadar devam edecek, bu da sürekli izleme gereksinimini karşılayacaktır.
+
+💻 Akıllı Ev Güvenlik Sistemi Algoritması (Pseudocode)
+Kod snippet'i
+
+BAŞLA AKILLI_EV_GÜVENLİK_SISTEMI
+    
+    // =======================================================
+    // 1. SİSTEMİN SÜREKLİ ÇALIŞMASI VE DURUM KONTROLÜ
+    // =======================================================
+    SISTEM_DURUMU = VERITABANI_SISTEM_DURUMU_GETIR() // "AKTIF" veya "PASIF"
+    EV_SAHIBI_KONUM = VERITABANI_KONUM_GETIR() // "EVDE" veya "DISARIDA"
+    ALARM_CALIYOR_MU = YANLIS
+
+    DONGU DOGRU // Ana döngü: Sistem sürekli çalışır
+        
+        // ** KONTROL 1: SİSTEM AKTİF Mİ? **
+        EGER SISTEM_DURUMU == "AKTIF" ISE
+            
+            // =======================================================
+            // 2. SENSÖR OKUMA DÖNGÜSÜ
+            // =======================================================
+            TEHLIKE_ALGILANDI = YANLIS
+            ALARM_SEVIYESI = 0 // 0:Yok, 1:Düşük, 2:Orta, 3:Yüksek
+
+            // Tüm sensörleri kontrol et
+            DONGU TUM_SENSORLER ICIN
+                SENSOR_VERISI = SENSOR_OKU(SENSOR)
+                
+                // ** KONTROL 2: HAREKET SENSÖRÜ **
+                EGER SENSOR.TIPI == "HAREKET" VE SENSOR_VERISI == "ALGILANDI" ISE
+                    TEHLIKE_ALGILANDI = DOGRU
+                    ALARM_SEVIYESI = MAKSIMUM(ALARM_SEVIYESI, 1) // En az Düşük seviye
+                BITIR EGER
+
+                // ** KONTROL 3: KAPI/PENCERE SENSÖRÜ **
+                EGER SENSOR.TIPI == "GIRIS" VE SENSOR_VERISI == "ACIK" ISE
+                    TEHLIKE_ALGILANDI = DOGRU
+                    ALARM_SEVIYESI = MAKSIMUM(ALARM_SEVIYESI, 2) // En az Orta seviye
+                BITIR EGER
+            BITIR DONGU // Tüm sensörlerin kontrolü bitti
+
+            // =======================================================
+            // 3. TEHDİT VE YANLIŞ ALARM KONTROLÜ
+            // =======================================================
+            EGER TEHLIKE_ALGILANDI ISE
+                
+                // ** KONTROL 4: YANLIŞ ALARM KONTROLÜ (Ev Sahibi Evde Mi?) **
+                EGER EV_SAHIBI_KONUM == "EVDE" ISE
+                    // Düşük seviye alarmı ev sahibi evdeyken genellikle göz ardı et
+                    EGER ALARM_SEVIYESI <= 1 ISE
+                        MESAJ_GOSTER("Evdeyken Düşük Seviye Hareket Algılandı. Alarm devreye alınmadı.")
+                        DEVAM_ET // Ana döngünün başına dön
+                    BITIR EGER
+                BITIR EGER
+                
+                // =======================================================
+                // 4. ALARM AKSİYONLARI VE BİLDİRİM
+                // =======================================================
+                
+                EGER ALARM_SEVIYESI >= 2 ISE
+                    // Orta veya Yüksek Seviye (Kapı açılması gibi)
+                    ALARM_CALIYOR_MU = DOGRU
+                    ALARM_SIRENI_CALISMAYI_BASLAT()
+                BITIR EGER
+                
+                // ** KONTROL 5: KAMERA AKTİVASYONU **
+                EGER ALARM_SEVIYESI >= 1 ISE
+                    KAMERA_VIDEO_KAYDINI_BASLAT()
+                BITIR EGER
+
+                // Bildirim Gönderme
+                BILDİRİM_GONDER(KULLANICI_TELEFON, SMS)
+                BILDİRİM_GONDER(KULLANICI_EMAIL, EMAIL)
+                MOBIL_UYGULAMA_PUSH_BILDIRIMI_GONDER()
+                
+                // =======================================================
+                // 5. BEKLEME ve SIFIRLAMA DÖNGÜSÜ
+                // =======================================================
+                DONGU ALARM_CALIYOR_MU == DOGRU
+                    BEKLE(10) // 10 saniye bekle
+                    
+                    // Alarm Sıfırlama komutu geldi mi kontrol et
+                    KULLANICI_KOMUTU = KULLANICIDAN_KOMUT_AL()
+                    
+                    // ** KONTROL 6: ALARM SIFIRLAMA VEYA DEVAM ETTİRME **
+                    EGER KULLANICI_KOMUTU == "SIFIRLA" ISE
+                        ALARM_CALIYOR_MU = YANLIS
+                        ALARM_SIRENI_CALISMAYI_DURDUR()
+                        KAMERA_KAYDINI_KAPAT()
+                        MESAJ_GOSTER("Alarm Sıfırlandı.")
+                        DONGUYU_BITIR // İç döngüden çık
+                    DEGILSE EGER KULLANICI_KOMUTU == "POLIS_CAGIR" ISE
+                        POLIS_BIRIMI_BILGILENDIR(EV_ADRESI, ALARM_SEVIYESI)
+                        DONGUYU_BITIR // İç döngüden çık
+                    BITIR EGER
+                BITIR DONGU // Alarm Sıfırlama Döngüsü Bitti
+
+            BITIR EGER // Tehlike Algılandı Kontrolü Bitti
+
+        DEGILSE // SISTEM_DURUMU == "PASIF"
+            // Sistem pasif durumdayken sadece bekle
+            BEKLE(5)
+        BITIR EGER
+        
+        // Temel sürekli döngüde bekleme
+        BEKLE(1) // Yeni sensör okuması için kısa bir bekleme
+        
+    BITIR DONGU // Ana sonsuz döngü bitti
+    
+BITIR AKILLI_EV_GÜVENLİK_SISTEMI
+Bu pseudocode'u Graphviz DOT formatına çeviriyorum.
+
+📉 Akıllı Ev Güvenlik Sistemi Akış Şeması (Graphviz DOT)
+Bu kodu Graphviz aracına yapıştırarak sistemin sürekli çalışan yapısını ve karmaşık kontrol akışını görebilirsiniz.
+
+Kod snippet'i
+
+digraph AKILLI_EV_GÜVENLIK_SISTEMI {
+    rankdir=TB;
+    node [shape=box];
+    
+    // Node Tanımlamaları
+    start [label="BAŞLA GÜVENLİK SİSTEMİ", shape=Mdiamond];
+    islem0 [label="Durumları Başlat:\nALARM_CALIYOR_MU=YANLIS, vb.", shape=box];
+    
+    // 1. Ana Döngü (Sürekli Çalışma)
+    dongu_ana [label="DÖNGÜ: SÜREKLİ ÇALIŞ", shape=diamond, style=filled, fillcolor=lightblue];
+    
+    // Kontrol 1: Sistem Aktif Mi?
+    karar1 [label="KONTROL 1:\nSISTEM_DURUMU == 'AKTIF'?", shape=diamond];
+    islem_bekle_pasif [label="BEKLE(5) (Pasif Durum)", shape=box];
+
+    // 2. Sensör Okuma Döngüsü
+    dongu_sensor [label="DÖNGÜ: TÜM SENSÖRLER İÇİN", shape=box, style=filled, fillcolor=lightyellow];
+    islem_tehdit_reset [label="Tehlike Durumunu Sıfırla", shape=box];
+    
+    // Sensör Kontrolleri
+    karar2_hareket [label="KONTROL 2:\nHareket Algılandı Mı?", shape=diamond];
+    karar3_giris [label="KONTROL 3:\nKapı/Pencere AÇIK Mı?", shape=diamond];
+    islem_seviye_dusuk [label="TEHLIKE_ALGILANDI=DOGRU\nALARM_SEVİYESİ = 1", shape=box];
+    islem_seviye_orta [label="TEHLIKE_ALGILANDI=DOGRU\nALARM_SEVİYESİ = 2", shape=box];
+    
+    // 3. Tehdit ve Yanlış Alarm Kontrolü
+    karar_tehlike [label="TEHLIKE_ALGILANDI?", shape=diamond];
+    karar4_yanlis [label="KONTROL 4:\nEv Sahibi EVDE Mi?", shape=diamond];
+    karar4_seviye [label="ALARM_SEVİYESİ <= 1 Mi?", shape=diamond];
+    islem_yanlis_alarm [label="Alarm İptal Edildi (Düşük Seviye)", shape=box, style=filled, fillcolor=orange];
+    
+    // 4. Alarm Aksiyonları
+    karar_orta_yuksek [label="ALARM_SEVİYESİ >= 2 Mi?", shape=diamond];
+    islem_siren [label="ALARM_SİRENİ_ÇALIŞMAYI_BAŞLAT()", shape=box];
+    
+    karar5_kamera [label="KONTROL 5:\nALARM_SEVİYESİ >= 1 Mi?", shape=diamond];
+    islem_kamera [label="KAMERA_KAYDINI_BAŞLAT()", shape=box];
+    islem_bildirim [label="Bildirimleri Gönder (SMS/Email/App)", shape=box, style=filled, fillcolor=lightcoral];
+    
+    // 5. Bekleme ve Sıfırlama Döngüsü
+    dongu_sifirlama [label="DÖNGÜ: ALARM_CALIYOR_MU == DOGRU", shape=diamond, style=filled, fillcolor=lightblue];
+    islem_bekle_onay [label="BEKLE(10) / Komut Al", shape=box];
+    
+    // Kontrol 6: Sıfırlama
+    karar6_komut [label="KONTROL 6:\nKomut 'SIFIRLA' Mı?", shape=diamond];
+    karar6_polis [label="Komut 'POLIS_CAGIR' Mı?", shape=diamond];
+    
+    islem_sifirla [label="Alarm Sıfırlandı\n(ALARM_CALIYOR_MU=YANLIS)", shape=box, style=filled, fillcolor=lightgreen];
+    islem_polis [label="POLİS_BİRİMİ_BİLGİLENDİR()", shape=box, style=filled, fillcolor=red];
+    
+    // Akış Bağlantıları
+    start -> islem0;
+    islem0 -> dongu_ana; // Sonsuz döngü başlangıcı
+    
+    // Ana Döngü Kontrolü
+    dongu_ana -> karar1 [label="Sürekli"];
+    karar1 -> islem_tehdit_reset [label="EVET"];
+    karar1 -> islem_bekle_pasif [label="HAYIR"];
+
+    // Pasif Durum
+    islem_bekle_pasif -> dongu_ana;
+
+    // Sensör Okuma (Kısaltılmış Döngü Gösterimi)
+    islem_tehdit_reset -> dongu_sensor;
+    dongu_sensor -> karar2_hareket [label="Her Sensör İçin"];
+    
+    // Hareket Kontrolü
+    karar2_hareket -> islem_seviye_dusuk [label="EVET"];
+    karar2_hareket -> karar3_giris [label="HAYIR"];
+
+    // Giriş Kontrolü
+    karar3_giris -> islem_seviye_orta [label="EVET"];
+    karar3_giris -> karar_tehlike [label="HAYIR/Döngü Sonu"]; // Sensör döngüsünden çıkış
+
+    islem_seviye_dusuk -> karar_tehlike;
+    islem_seviye_orta -> karar_tehlike;
+
+    // Tehdit Algılama
+    karar_tehlike -> karar4_yanlis [label="EVET"];
+    karar_tehlike -> dongu_ana [label="HAYIR"]; // Tehlike yoksa başa dön
+    
+    // Yanlış Alarm Kontrolü
+    karar4_yanlis -> karar4_seviye [label="EVET/Evde"];
+    karar4_yanlis -> karar_orta_yuksek [label="HAYIR/Dışarıda"];
+
+    karar4_seviye -> islem_yanlis_alarm [label="EVET/Düşük Seviye"];
+    karar4_seviye -> karar_orta_yuksek [label="HAYIR/Orta/Yüksek"];
+    
+    islem_yanlis_alarm -> dongu_ana;
+    
+    // Alarm Aksiyonları
+    karar_orta_yuksek -> islem_siren [label="EVET"];
+    karar_orta_yuksek -> karar5_kamera [label="HAYIR"];
+    islem_siren -> karar5_kamera;
+    
+    karar5_kamera -> islem_kamera [label="EVET"];
+    karar5_kamera -> islem_bildirim [label="HAYIR"]; // Seviye < 1 ise kamera yok
+
+    islem_kamera -> islem_bildirim;
+    islem_bildirim -> dongu_sifirlama;
+
+    // Sıfırlama Döngüsü
+    dongu_sifirlama -> islem_bekle_onay [label="Sürekli"];
+    islem_bekle_onay -> karar6_komut;
+    
+    // Komut Kontrolü
+    karar6_komut -> islem_sifirla [label="EVET/SIFIRLA"];
+    karar6_komut -> karar6_polis [label="HAYIR"];
+    
+    karar6_polis -> islem_polis [label="EVET/POLIS_CAGIR"];
+    karar6_polis -> dongu_sifirlama [label="HAYIR/Bekle"];
+    
+    islem_sifirla -> dongu_ana;
+    islem_polis -> dongu_ana;
+    
+    dongu_ana -> end [label="Sistem Kapatıldı (Dışarıdan)"]; // Teorik sonlandırma
+
+}
