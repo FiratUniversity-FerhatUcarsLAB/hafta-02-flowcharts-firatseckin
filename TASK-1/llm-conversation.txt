@@ -1,0 +1,131 @@
+ATM para çekme sistemi için detaylı pseudocode yazmanı istiyorum. Şunları içermeli: PIN doğrulama (3 hak), bakiye kontrolü, tutar kontrolü (20 TL katları), günlük limit kontrolü, işlem tekrarı seçeneği. Tüm adımları BASŞLA, OKU, YAZ, EĞER- İSE, DÖNGÜ yapılarıyla yaz
+ChatGPT:
+İşte ATM para çekme sistemi için detaylı bir pseudocode örneği:
+Başlangıç
+BASLA
+    PIN_Dogrulama()
+    Bakiye_Kontrolü()
+    Tutar_Kontrolü()
+    Gunluk_Limit_Kontrolü()
+    Islem_Tekrari()
+
+BİTİR
+PIN Doğrulama
+FONKSIYON PIN_Dogrulama()
+    PIN = 0
+    HAK = 3
+    DÖNGÜ (HAK > 0)
+        KULLANICI PIN'İ GİR
+        EĞER PIN == DOĞRU_PIN
+            YAZ("PIN doğrulandı.")
+            DÖN
+        EĞER-İSE
+            HAK = HAK - 1
+            YAZ("Yanlış PIN. Kalan hak: " + HAK)
+    EĞER-İSE
+        YAZ("3 kez yanlış PIN girildi. Kart bloke oldu.")
+        BİTİR
+BİTİR
+Bakiye Kontrolü
+FONKSIYON Bakiye_Kontrolü()
+    Bakiye = 5000 TL  // Örnek bakiye
+    YAZ("Bakiyeniz: " + Bakiye + " TL")
+BİTİR
+Tutar Kontrolü
+FONKSIYON Tutar_Kontrolü()
+    Tutar = 0
+    EĞER Tutar % 20 != 0
+        YAZ("Çekmek istediğiniz tutar 20 TL katları olmalıdır.")
+        BİTİR
+    EĞER-İSE
+        YAZ("Tutar uygun.")
+BİTİR
+Günlük Limit Kontrolü
+FONKSIYON Gunluk_Limit_Kontrolü()
+    Gunluk_Limit = 1000 TL  // Örnek günlük limit
+    Cekilen_Tutar = 0
+    YAZ("Günlük limitiniz: " + Gunluk_Limit + " TL")
+    YAZ("Şu ana kadar çekilen tutar: " + Cekilen_Tutar + " TL")
+    EĞER Cekilen_Tutar + Tutar > Gunluk_Limit
+        YAZ("Günlük limitinizi aştınız. Lütfen başka bir işlem yapın.")
+        BİTİR
+    EĞER-İSE
+        YAZ("Günlük limit kontrolü geçildi.")
+BİTİR
+İşlem Tekrarı
+FONKSIYON Islem_Tekrari()
+    YAZ("İşlem tekrar edilsin mi? (Evet/Hayır)")
+    Cevap = KULLANICI_CEVABI
+    EĞER Cevap == "Evet"
+        YAZ("İşlem tekrar ediliyor.")
+        BASLA
+    EĞER-İSE
+        YAZ("İşlem tamamlandı. Hoşça kalın!")
+        BİTİR
+BİTİR
+________________________________________
+Bu pseudocode örneği ATM para çekme sisteminin temel adımlarını içeriyor: PIN doğrulama, bakiye kontrolü, tutar kontrolü, günlük limit kontrolü ve işlem tekrarı. Her adımda bir kullanıcı etkileşimi ve hata kontrolü sağlanmıştır.
+Şunu dedin:
+tek formatta yazar mısın
+ChatGPT:
+Tabii, tüm adımları tek bir pseudocode formatında yazıyorum:
+BASLA
+    // PIN Doğrulama
+    PIN = 0
+    HAK = 3
+    DÖNGÜ (HAK > 0)
+        KULLANICI PIN'İ GİR
+        EĞER PIN == DOĞRU_PIN
+            YAZ("PIN doğrulandı.")
+            DÖN
+        EĞER-İSE
+            HAK = HAK - 1
+            YAZ("Yanlış PIN. Kalan hak: " + HAK)
+    EĞER-İSE
+        YAZ("3 kez yanlış PIN girildi. Kart bloke oldu.")
+        BİTİR
+    
+    // Bakiye Kontrolü
+    Bakiye = 5000 TL  // Örnek bakiye
+    YAZ("Bakiyeniz: " + Bakiye + " TL")
+    
+    // Tutar Kontrolü
+    Tutar = 0
+    YAZ("Çekmek istediğiniz tutarı girin:")
+    KULLANICI_TUTAR_GİR
+    EĞER Tutar % 20 != 0
+        YAZ("Çekmek istediğiniz tutar 20 TL katları olmalıdır.")
+        BİTİR
+    EĞER-İSE
+        YAZ("Tutar uygun.")
+    
+    // Günlük Limit Kontrolü
+    Gunluk_Limit = 1000 TL  // Örnek günlük limit
+    Cekilen_Tutar = 0
+    YAZ("Günlük limitiniz: " + Gunluk_Limit + " TL")
+    YAZ("Şu ana kadar çekilen tutar: " + Cekilen_Tutar + " TL")
+    EĞER Cekilen_Tutar + Tutar > Gunluk_Limit
+        YAZ("Günlük limitinizi aştınız. Lütfen başka bir işlem yapın.")
+        BİTİR
+    EĞER-İSE
+        YAZ("Günlük limit kontrolü geçildi.")
+    
+    // Para Çekme İşlemi
+    EĞER Bakiye >= Tutar
+        Bakiye = Bakiye - Tutar
+        Cekilen_Tutar = Cekilen_Tutar + Tutar
+        YAZ(Tutar + " TL başarıyla çekildi. Kalan bakiye: " + Bakiye + " TL")
+    EĞER-İSE
+        YAZ("Yetersiz bakiye. İşlem iptal edildi.")
+    
+    // İşlem Tekrarı
+    YAZ("İşlem tekrar edilsin mi? (Evet/Hayır)")
+    Cevap = KULLANICI_CEVABI
+    EĞER Cevap == "Evet"
+        YAZ("İşlem tekrar ediliyor.")
+        BASLA
+    EĞER-İSE
+        YAZ("İşlem tamamlandı. Hoşça kalın!")
+        BİTİR
+BİTİR
+Bu pseudocode, ATM para çekme işleminde kullanılan tüm adımları tek bir yapı altında toplayarak detaylı bir işlem akışı sunuyor. Başlangıç, PIN doğrulama, bakiye kontrolü, tutar kontrolü, günlük limit kontrolü, para çekme, ve işlem tekrarı seçeneklerini içeriyor.
